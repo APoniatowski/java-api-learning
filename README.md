@@ -30,7 +30,11 @@ This README provides instructions for setting up Java/JDK v21 and Elasticsearch 
 
 ### On Linux:
 
-1. Ensure your system is up-to-date by running: `sudo pacman -Syu`
+1. Ensure your system is up-to-date by running: 
+ * **Red Hat/Centos/Fedora: ** `sudo yum update` or `sudo dnf update`
+ * **Ubuntu/Debian/Mint: ** `sudo apt update` then `sudo apt upgrade`
+ * **OpenSuse: ** `sudo zypper update`
+ * **Arch: ** `sudo pacman -Syu`
 2. Enable the Community Repository. If not already enabled, ensure that the `[community]` repository is enabled in your `/etc/pacman.conf` file. It usually is by default.
 3. Install Elasticsearch using Pacman: `sudo pacman -S elasticsearch`
 4. Then start the service with `sudo systemctl start elasticsearch.service`
@@ -71,4 +75,19 @@ If Elasticsearch is running, you'll receive a JSON response with its status
 - You can refer to the Elasticsearch [support matrix](https://www.elastic.co/support/matrix#matrix_jvm) to check compatibility
 - If there's an incompatibility issue, either change the Elasticsearch version to one that supports Java 21 or use a different JDK version that's compatible with your Elasticsearch version
 
+## Adding Elasticsearch SSL Certificate to Java Keystore
+
+1. **Export the SSL Certificate**:
+   - Use a browser or `openssl` to export the SSL certificate from your Elasticsearch server.
+   - Command example with `openssl`:
+     ```
+     openssl s_client -connect localhost:9200 </dev/null | openssl x509 -outform PEM > elasticsearch-cert.pem
+     ```
+2. **Import the Certificate into Java's Keystore**:
+   - Use the `keytool` utility included with the JDK:
+     ```
+     keytool -import -alias elasticsearch -keystore [Path-To-Keystore] -file elasticsearch-cert.pem
+     ```
+   - The default path for Java's keystore is usually `$JAVA_HOME/lib/security/cacerts`.
+   - Default keystore password is typically `changeit`.
 
