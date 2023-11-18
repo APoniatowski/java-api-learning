@@ -1,0 +1,18 @@
+plugins {
+}
+
+group = 'com.github.APoniatowski.JavaAPILearning'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '21'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+test {
+    useJUnitPlatform()
+}
+
