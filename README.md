@@ -68,6 +68,7 @@ curl -X GET "localhost:9200/"
 ```
 If Elasticsearch is running, you'll receive a JSON response with its status
 
+**NB**: Make sure you change the uernames and passwords. So far I have hardcoded the username and password to `elastic` and `changeme` for now.  I will change it to check for environment variables, so that one can specify another username and password, and not a hardcoded one.
 
 ## 3. Compatibility Check
 
@@ -88,6 +89,38 @@ If Elasticsearch is running, you'll receive a JSON response with its status
      ```
      keytool -import -alias elasticsearch -keystore [Path-To-Keystore] -file elasticsearch-cert.pem
      ```
-   - The default path for Java's keystore is usually `$JAVA_HOME/lib/security/cacerts`.
-   - Default keystore password is typically `changeit`.
+   - The default path for Java's keystore is usually `$JAVA_HOME/lib/security/cacerts`
+   - Default keystore password is typically `changeit`
+
+## Building the Project
+
+1. Clone the repository to your local machine
+2. Navigate to the project directory
+3. Run `gradle build` to build the project
+
+## Running the Application
+
+1. After building the project, start the Spring Boot application by running `gradle bootRun`
+2. The application will start and be accessible on `http://localhost:8080`
+
+## Usage
+
+### Create an Index
+
+```bash
+curl -X POST "http://localhost:8080/elasticsearch/createIndex?indexName=indexname"
+```
+Replace indexname with your desired index name (in lowercase)
+
+### Create a Document
+```bash
+curl -X POST "http://localhost:8080/elasticsearch/createDocument?indexName=indexname" -H "Content-Type: application/json" -d '{"field1": "value1", "field2": "value2"}'
+```
+Replace indexname with the name of the index where you want to create the document (in  lowecase)
+
+### Get a Document
+```bash
+curl "http://localhost:8080/elasticsearch/getDocument?indexName=indexname&id=documentId"
+```
+Replace indexname with the name of your index and documentId with the ID of the document you want to retrieve
 
