@@ -1,5 +1,7 @@
 package com.github.APoniatowski.JavaAPILearning;
 
+import com.github.APoniatowski.JavaAPILearning.util.UtilityClass;
+
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -11,6 +13,8 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -24,25 +28,40 @@ public class ElasticsearchController {
   private RestHighLevelClient client;
 
   @PostMapping("/createIndex")
-  public String createIndex(@RequestParam String indexName) throws IOException {
-    CreateIndexRequest request = new CreateIndexRequest(indexName);
-    CreateIndexResponse createIndexResponse = client.indices().create(request, RequestOptions.DEFAULT);
-    return "Index created: " + createIndexResponse.index();
+  public ResponseEntity<String> createIndex(@RequestParam String indexName) {
+    try {
+      CreateIndexRequest request = new CreateIndexRequest(indexName);
+      CreateIndexResponse createIndexResponse = client.indices().create(request, RequestOptions.DEFAULT);
+      return ResponseEntity.ok("Index created: " + createIndexResponse.index());
+    } catch (IOException e) {
+      UtilityClass.logError("Error creating index: " + e.getMessage(), e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating index");
+    }
   }
 
   @PostMapping("/createDocument")
-  public String createDocument(@RequestParam String indexName, @RequestBody Map<String, Object> document)
-      throws IOException {
-    IndexRequest request = new IndexRequest(indexName);
-    request.source(document, XContentType.JSON);
-    IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
-    return "Document created with ID: " + indexResponse.getId();
+  public ResponseEntity<String> createDocument(@RequestParam String indexName,
+      @RequestBody Map<String, Object> document) {
+    try {
+      IndexRequest request = new IndexRequest(indexName);
+      request.source(document, XContentType.JSON);
+      IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
+      return ResponseEntity.ok("Document created with ID: " + indexResponse.getId());
+    } catch (IOException e) {
+      UtilityClass.logError("Error creating document: " + e.getMessage(), e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating document");
+    }
   }
 
   @GetMapping("/getDocument")
-  public Map<String, Object> getDocument(@RequestParam String indexName, @RequestParam String id) throws IOException {
-    GetRequest getRequest = new GetRequest(indexName, id);
-    GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
-    return getResponse.getSource();
+  public ResponseEntity<Map<String, Object>> getDocument(@RequestParam String indexName, @RequestParam String id) {
+    try {
+      GetRequest getRequest = new GetRequest(indexName, id);
+      GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+      return ResponseEntity.ok(getResponse.getSource());
+    } catch (IOException e) {
+      UtilityClass.logError("Error getting document: " + e.getMessage(), e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
   }
 }

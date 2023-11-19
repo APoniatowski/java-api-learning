@@ -6,6 +6,12 @@ import java.security.cert.X509Certificate;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.IOException;
+
+import java.util.logging.Logger;
+import java.util.logging.FileHandler;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.Level;
 
 import java.util.Date;
 
@@ -25,7 +31,7 @@ public class UtilityClass {
         return true;
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      UtilityClass.logError("Certificate validation error: ", e);
     }
     return false;
   }
@@ -43,6 +49,27 @@ public class UtilityClass {
     }
 
     return keystorePath;
+  }
+
+  private static final Logger logger = Logger.getLogger(UtilityClass.class.getName());
+
+  static {
+    try {
+      FileHandler fileHandler = new FileHandler("errors.log", true);
+      fileHandler.setFormatter(new SimpleFormatter());
+      logger.addHandler(fileHandler);
+      logger.setLevel(Level.ALL);
+    } catch (IOException e) {
+      logger.log(Level.SEVERE, "Error setting up file logger", e);
+    }
+  }
+
+  public static void logError(String message, Throwable ex) {
+    if (ex != null) {
+      logger.log(Level.SEVERE, message, ex);
+    } else {
+      logger.log(Level.SEVERE, message);
+    }
   }
 
 }

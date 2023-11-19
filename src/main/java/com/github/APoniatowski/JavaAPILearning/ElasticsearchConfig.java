@@ -26,24 +26,38 @@ public class ElasticsearchConfig {
   private static final String CERT_ALIAS = "elasticsearch";
 
   @Bean
-  public RestHighLevelClient client() throws Exception {
-    String keystorePath = UtilityClass.getDefaultKeystorePath();
-    CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-    credentialsProvider.setCredentials(AuthScope.ANY,
-        new UsernamePasswordCredentials("elastic", "changeme"));
+  public RestHighLevelClient client() {
+    RestHighLevelClient client = null;
+    try {
+      String keystorePath = UtilityClass.getDefaultKeystorePath();
+      CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+      credentialsProvider.setCredentials(AuthScope.ANY,
+          new UsernamePasswordCredentials("elastic", "changeme"));
 
-    RestClientBuilder builder;
+      RestClientBuilder builder;
 
-    if (UtilityClass.isCertificateValid(keystorePath, KEYSTORE_PASSWORD, CERT_ALIAS)) {
-      builder = RestClient.builder(new HttpHost("localhost", 9200, "https"))
-          .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
-              .setDefaultCredentialsProvider(credentialsProvider));
-    } else {
-      builder = RestClient.builder(new HttpHost("localhost", 9200, "http"))
-          .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
-              .setDefaultCredentialsProvider(credentialsProvider));
+      try {
+        if (UtilityClass.isCertificateValid(keystorePath, KEYSTORE_PASSWORD, CERT_ALIAS)) {
+          builder = RestClient.builder(new HttpHost("localhost", 9200, "https"))
+              .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
+                  .setDefaultCredentialsProvider(credentialsProvider));
+        } else {
+          builder = RestClient.builder(new HttpHost("localhost", 9200, "http"))
+              .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
+                  .setDefaultCredentialsProvider(credentialsProvider));
+        }
+      } catch (Exception e) {
+        UtilityClass.logError("Error validating certificate: " + e.getMessage(), e);
+        builder = RestClient.builder(new HttpHost("localhost", 9200, "http"))
+            .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder
+                .setDefaultCredentialsProvider(credentialsProvider));
+      }
+
+      client = new RestHighLevelClient(builder);
+    } catch (Exception e) {
+      UtilityClass.logError("Error creating Elasticsearch client: " + e.getMessage(), e);
     }
-
-    return new RestHighLevelClient(builder);
+    return client;
   }
+
 }

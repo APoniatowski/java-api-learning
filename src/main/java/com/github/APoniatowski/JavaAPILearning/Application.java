@@ -1,5 +1,7 @@
 package com.github.APoniatowski.JavaAPILearning;
 
+import com.github.APoniatowski.JavaAPILearning.util.UtilityClass;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,7 +47,7 @@ public class Application {
         Request request = new Request("GET", "/");
         response = lowLevelClient.performRequest(request);
       } catch (IOException e) {
-        System.out.println("Elasticsearch connection check failed: " + e.getMessage());
+        UtilityClass.logError("An error occurred: " + e.getMessage(), e);
       }
 
       if (response != null && response.getStatusLine().getStatusCode() == 200) {
