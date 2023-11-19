@@ -9,6 +9,7 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.xcontent.XContentType;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

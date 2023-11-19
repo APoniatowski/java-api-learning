@@ -3,8 +3,10 @@ package com.github.APoniatowski.JavaAPILearning.util;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
+
 import java.util.Date;
 
 public class UtilityClass {

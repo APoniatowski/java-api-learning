@@ -25,3 +25,13 @@ replay_pid*
 
 # its ignoring the gradle-wrapper.jar file needed for github actions
 !/gradle/wrapper/gradle-wrapper.jar
+
+# Build dir
+/build
+
+# dot Directories
+/.gradle
+/.settings
+/.classpath
+/.project
+

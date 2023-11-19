@@ -1,12 +1,14 @@
 package com.github.APoniatowski.JavaAPILearning;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.RestClient;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 
