@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -25,32 +26,37 @@ public class Application {
 
   @PostConstruct
   public void checkElasticsearchConnection() {
-    try {
-      Request request = new Request("GET", "/");
-      Response response = client.getLowLevelClient().performRequest(request);
-      if (response.getStatusLine().getStatusCode() == 200) {
+    if (System.getProperty("skipElasticsearchCheck") == null) {
+      if (client == null) {
+        System.out.println("Elasticsearch client is null.");
+        return;
+      }
+
+      RestClient lowLevelClient = client.getLowLevelClient();
+      if (lowLevelClient == null) {
+        System.out.println("Elasticsearch low-level client is null.");
+        return;
+      }
+
+      Response response = null;
+      try {
+        Request request = new Request("GET", "/");
+        response = lowLevelClient.performRequest(request);
+      } catch (IOException e) {
+        System.out.println("Elasticsearch connection check failed: " + e.getMessage());
+      }
+
+      if (response != null && response.getStatusLine().getStatusCode() == 200) {
         System.out.println("Elasticsearch is reachable.");
       } else {
-        System.out.println("Elasticsearch is not reachable. Status Code: " + response.getStatusLine().getStatusCode());
+        System.out.println("Elasticsearch is not reachable or response is null.");
       }
-    } catch (IOException e) {
-      System.out.println("Elasticsearch connection check failed: " + e.getMessage());
     }
   }
 
   public static String getDefaultKeystorePath() {
     String os = System.getProperty("os.name").toLowerCase();
     String javaHome = System.getProperty("java.home");
-
-    String keystorePath;
-
-    if (os.contains("win")) {
-      keystorePath = javaHome + "\\lib\\security\\cacerts";
-    } else {
-      keystorePath = javaHome + "/lib/security/cacerts";
-    }
-
-    return keystorePath;
+    return os.contains("win") ? javaHome + "\\lib\\security\\cacerts" : javaHome + "/lib/security/cacerts";
   }
-
 }
