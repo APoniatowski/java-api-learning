@@ -36,7 +36,7 @@ This README provides instructions for setting up Java/JDK v21 and Elasticsearch 
  * **OpenSuse: ** `sudo zypper update`
  * **Arch: ** `sudo pacman -Syu`
 2. Enable the Community Repository. If not already enabled, ensure that the `[community]` repository is enabled in your `/etc/pacman.conf` file. It usually is by default.
-3. Install Elasticsearch using Pacman: `sudo pacman -S elasticsearch`
+3. Install Elasticsearch using Pacman: `yay -S elasticsearch7`
 4. Then start the service with `sudo systemctl start elasticsearch.service`
 5. Enable the Elasticsearch service to start automatically on boot with `sudo systemctl enable elasticsearch.service`
 6. The default configuration file is located at `/etc/elasticsearch/elasticsearch.yml`, and one can configure it here
@@ -46,7 +46,7 @@ curl -X GET "localhost:9200/"
 ```
 This should return a JSON response with information about the Elasticsearch instance.
 
-- **NB**: Elasticsearch might take a few moments to start up. If you encounter any issues, check the logs in `/var/log/elasticsearch/` for more information.
+- **NB**: Elasticsearch might take a few moments to start up. If you encounter any issues, check the logs in `/var/log/elasticsearch/` for more information. Also make sure you have jdk19-openjdk installed for v7.17.15, as it is
 
 - **TIP**: You can enable and start the service with `sudo systemctl enable --now elasticsearch.service`
 
@@ -124,3 +124,80 @@ curl "http://localhost:8080/elasticsearch/getDocument?indexName=indexname&id=doc
 ```
 Replace indexname with the name of your index and documentId with the ID of the document you want to retrieve
 
+
+# Quick Start with ''Make' Guide
+
+This guide provides instructions on how to quickly set up and run the project using the provided `Makefile`. Please follow these steps to ensure a smooth setup
+
+### Prerequisites
+
+- Ensure you have make installed on your system
+- For Linux users, pacman and yay should be available for installing packages
+- For macOS users, brew should be installed and available
+- Make sure you have sufficient permissions to execute sudo commands
+
+### Setting Up and Running the Application
+
+1. **Clone the Repository**:
+
+First, clone the repository to your local machine:
+```bash
+git clone https://github.com/APoniatowski/java-api-learning
+cd java-api-learning
+```
+
+2. **Run the Setup**:
+
+To set up the project environment, run the following command in your terminal:
+```bash
+make install-elasticsearch-linux  # For Linux users
+make install-elasticsearch-macos  # For macOS users (untested)
+# For Windows users, follow manual installation instructions.
+```
+After this completes, run the following:
+```bash
+make install-java-linux  # For Linux users
+make install-java-macos  # For macOS users (untested)
+# For Windows users, follow manual installation instructions.
+```
+
+3. **Start the Application**:
+
+Start the application by running:
+```bash
+make run
+```
+
+This command will start the application in the foreground. To continue with the next steps, open a new terminal or tab
+
+### Running Tests
+
+Once the application is running, you can execute tests in a separate terminal or tab
+
+1. **Open a New Terminal/Tab**:
+
+While keeping the application running in the first terminal, open a new terminal or tab in your command-line interface
+
+2. **Execute Tests**:
+
+In the new terminal, run:
+```bash
+make test-curl
+```
+
+This will execute a series of `curl` commands to test various functionalities of the running application. There will be instructions on how to execute it manually, if it were to fail
+
+### Stopping the Application
+After you have finished testing or using the application, you can stop it by going back to the original terminal where the application is running and pressing `Ctrl+C`
+
+### Cleanup
+
+To clean up the environment after you're done, run:
+```bash
+make clean
+```
+
+This will remove any build artifacts and revert some of the installation changes
+
+
+**NB**: The provided `Makefile` is designed for ease of use and quick setup. However, it's always good practice to review the `Makefile` commands to understand what each command does, especially those that require `sudo` privileges. For Windows users, as some commands are untested, please follow the manual setup instructions provided in the `Makefile`
