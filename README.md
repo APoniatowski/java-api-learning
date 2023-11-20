@@ -201,3 +201,6 @@ This will remove any build artifacts and revert some of the installation changes
 
 
 **NB**: The provided `Makefile` is designed for ease of use and quick setup. However, it's always good practice to review the `Makefile` commands to understand what each command does, especially those that require `sudo` privileges. For Windows users, as some commands are untested, please follow the manual setup instructions provided in the `Makefile`
+
+[![Watch the video](https://img.youtube.com/vi/QrnQjOQmuNY/maxresdefault.jpg)](https://youtu.be/QrnQjOQmuNY)
+
